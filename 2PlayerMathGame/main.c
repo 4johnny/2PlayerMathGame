@@ -20,9 +20,17 @@
 // Types
 //
 
+typedef enum Operator {
+	PLUS = 0,
+	MINUS = 1,
+	MULTIPLY = 2
+} Operator;
+
 typedef struct Challenge {
 	int val1;
 	int val2;
+	Operator op;
+	char opChar;
 	int soln;
 } Challenge;
 
@@ -46,19 +54,37 @@ void printPlayer(Player* player) {
 	printf("%s: {lives: %d, score: %d}", player->name, player->lives, player->score);
 }
 
-void generateAdditionChallenge(Challenge* challenge) {
+void generateChallenge(Challenge* challenge) {
 	
 	challenge->val1 = arc4random_uniform(20) + 1;
 	challenge->val2 = arc4random_uniform(20) + 1;
 	
-	challenge->soln = challenge->val1 + challenge->val2;
+	Operator op = arc4random_uniform(3);
+	switch (op) {
+			
+		case MINUS:
+			challenge->soln = challenge->val1 - challenge->val2;
+			challenge->opChar = '-';
+			break;
+			
+		case MULTIPLY:
+			challenge->soln = challenge->val1 * challenge->val2;
+			challenge->opChar = '*';
+			break;
+			
+		default:
+		case PLUS:
+			challenge->soln = challenge->val1 + challenge->val2;
+			challenge->opChar = '+';
+			break;
+	}
 }
 
 int attemptChallenge(Player* player) {
 	
-	Challenge challenge; generateAdditionChallenge(&challenge);
+	Challenge challenge; generateChallenge(&challenge);
 	
-	printf("%s's Turn: %d + %d? ", player->name, challenge.val1, challenge.val2);
+	printf("%s's Turn: %d %c %d? ", player->name, challenge.val1, challenge.opChar, challenge.val2);
 	int answer; scanf("%d", &answer);
 	
 	if (answer == challenge.soln) {
@@ -77,8 +103,10 @@ void runTurn(Player* challenger, Player players[]) {
 	} else {
 		printf("Epic Fail!\n");
 	}
+	
 	printPlayer(&players[0]); printf("\n");
 	printPlayer(&players[1]); printf("\n");
+	
 	printf("\n");
 }
 
@@ -91,12 +119,10 @@ int main(int argc, const char * argv[]) {
 	printf("Math Game\n=========\n\n");
 	
 	char player1Name[256];
-	printf("Player1 Name: ");
-	scanf("%s", player1Name);
+	printf("Player1 Name: "); scanf("%s", player1Name);
 	
 	char player2Name[256];
-	printf("Player2 Name: ");
-	scanf("%s", player2Name);
+	printf("Player2 Name: "); scanf("%s", player2Name);
 	
 	Player players[2];
 	initPlayer(&players[0], player1Name, INIT_LIVES);
@@ -126,8 +152,7 @@ int main(int argc, const char * argv[]) {
 		}
 		
 		// Play again?
-		printf("Play again? ");
-		scanf(" %c", &playAgain);
+		printf("Play again? "); scanf(" %c", &playAgain);
 		
 	} while (tolower(playAgain) == 'y');
 	
