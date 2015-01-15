@@ -87,11 +87,22 @@ void runTurn(Player* challenger, Player players[]) {
 
 int main(int argc, const char * argv[]) {
 
+	printf("Math Game\n=========\n\n");
+
+	char player1Name[256];
+	printf("Player1 Name: ");
+	scanf("%s", player1Name);
+	
+	char player2Name[256];
+	printf("Player2 Name: ");
+	scanf("%s", player2Name);
+	
 	Player players[2];
-	initPlayer(&players[0], "Player1");
-	initPlayer(&players[1], "Player2");
+	initPlayer(&players[0], player1Name);
+	initPlayer(&players[1], player2Name);
 	
 	// Play game until at least one player runs out of lives
+	printf("Let's Play!\n\n");
 	do {
 		runTurn(&players[0], players);
 		runTurn(&players[1], players);
