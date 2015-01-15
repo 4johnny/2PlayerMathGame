@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 
 //
 // Macros
@@ -46,8 +47,8 @@ void printPlayer(Player* player) {
 
 void generateAdditionChallenge(Challenge* challenge) {
 	
-	challenge->val1 = 7; // TODO: Uniform random 1..20.
-	challenge->val2 = 9; // TODO: Uniform random 1..20.
+	challenge->val1 = arc4random_uniform(20) + 1;
+	challenge->val2 = arc4random_uniform(20) + 1;
 
 	challenge->soln = challenge->val1 + challenge->val2;
 }
