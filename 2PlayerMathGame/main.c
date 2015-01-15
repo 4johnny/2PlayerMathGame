@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 //
 // Macros
@@ -35,9 +36,9 @@ typedef struct Player {
 // Definitions
 //
 
-void initPlayer(Player* player, char name[]) {
+void initPlayer(Player* player, char name[], int lives) {
 	player->name = name;
-	player->lives = INIT_LIVES;
+	player->lives = lives;
 	player->score = 0;
 }
 
@@ -49,14 +50,14 @@ void generateAdditionChallenge(Challenge* challenge) {
 	
 	challenge->val1 = arc4random_uniform(20) + 1;
 	challenge->val2 = arc4random_uniform(20) + 1;
-
+	
 	challenge->soln = challenge->val1 + challenge->val2;
 }
 
 int attemptChallenge(Player* player) {
-
+	
 	Challenge challenge; generateAdditionChallenge(&challenge);
-
+	
 	printf("%s's Turn: %d + %d? ", player->name, challenge.val1, challenge.val2);
 	int answer; scanf("%d", &answer);
 	
@@ -70,7 +71,7 @@ int attemptChallenge(Player* player) {
 }
 
 void runTurn(Player* challenger, Player players[]) {
-
+	
 	if (attemptChallenge(challenger)) {
 		printf("Score!\n");
 	} else {
@@ -86,9 +87,9 @@ void runTurn(Player* challenger, Player players[]) {
 //
 
 int main(int argc, const char * argv[]) {
-
+	
 	printf("Math Game\n=========\n\n");
-
+	
 	char player1Name[256];
 	printf("Player1 Name: ");
 	scanf("%s", player1Name);
@@ -98,23 +99,37 @@ int main(int argc, const char * argv[]) {
 	scanf("%s", player2Name);
 	
 	Player players[2];
-	initPlayer(&players[0], player1Name);
-	initPlayer(&players[1], player2Name);
+	initPlayer(&players[0], player1Name, INIT_LIVES);
+	initPlayer(&players[1], player2Name, INIT_LIVES);
 	
-	// Play game until at least one player runs out of lives
-	printf("Let's Play!\n\n");
+	
+	// Play game repeatedly until bored.
+	char playAgain;
 	do {
-		runTurn(&players[0], players);
-		runTurn(&players[1], players);
+		// Reset lives
+		players[0].lives = INIT_LIVES;
+		players[1].lives = INIT_LIVES;
 		
-	} while (players[0].lives > 0 && players[1].lives > 0);
-
-	// Final results
-	if (players[0].score == players[1].score) {
-		printf("You are both LOSERS!\n");
-	} else {
-		printf("%s for the WIN!\n", players[0].score > players[1].score ? players[0].name : players[1].name);
-	}
+		// Play game until at least one player runs out of lives
+		printf("Let's Play!\n\n");
+		do {
+			runTurn(&players[0], players);
+			runTurn(&players[1], players);
+			
+		} while (players[0].lives > 0 && players[1].lives > 0);
+		
+		// Final results
+		if (players[0].score == players[1].score) {
+			printf("You are both LOSERS!\n");
+		} else {
+			printf("%s for the WIN!\n", players[0].score > players[1].score ? players[0].name : players[1].name);
+		}
+		
+		// Play again?
+		printf("Play again? ");
+		scanf(" %c", &playAgain);
+		
+	} while (tolower(playAgain) == 'y');
 	
 	return 0;
 }
