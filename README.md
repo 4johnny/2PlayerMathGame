@@ -1,5 +1,5 @@
 # 2PlayerMathGame
-iOS Bootcamp Assignment - 2PlayerMathGame
+iOS Bootcamp Assignment - W1D2 - PlayerMathGame
 
 * GitHub
 * Pseudocode
